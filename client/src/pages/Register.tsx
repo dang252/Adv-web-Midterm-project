@@ -80,7 +80,8 @@ const Register = () => {
       >
         <Flex
           w={{ base: "100%", xl: "90%", "2xl": "70%" }}
-          justifyContent={{ base: "center", xl: "space-between" }}
+          // justifyContent={{ base: "center", xl: "space-between" }}
+          justifyContent={{ base: "center" }}
           my={"100px"}
           mx={"auto"}
         >
@@ -163,9 +164,9 @@ const Register = () => {
               </Link>
             </Flex>
           </Stack>
-          <div className="w-[60%] hidden xl:flex items-center">
+          {/* <div className="w-[60%] hidden xl:flex items-center">
             <img className="w-[100%]" src="./register.jpg" alt="login_banner" />
-          </div>
+          </div> */}
         </Flex>
       </Flex>
     </div>
