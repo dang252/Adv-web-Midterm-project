@@ -11,6 +11,8 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 
+import { Link } from "react-router-dom";
+
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 
@@ -92,6 +94,12 @@ const Login = () => {
               </form>
             </Stack>
           </Box>
+          <Flex className="flex gap-1 justify-center">
+            <p>Don't have account?</p>
+            <Link to="/register">
+              <Text color={"blue.400"}>Register now</Text>
+            </Link>
+          </Flex>
         </Stack>
       </Flex>
     </div>
