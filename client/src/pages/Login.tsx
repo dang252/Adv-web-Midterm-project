@@ -1,9 +1,15 @@
 import { useTitle } from "../hooks/useTitle";
 
+import LoginNav from "../components/LoginNav";
+
 const Login = () => {
   useTitle("Login");
 
-  return <div>Login</div>;
+  return (
+    <div>
+      <LoginNav />
+    </div>
+  );
 };
 
 export default Login;

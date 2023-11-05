@@ -1,63 +1,42 @@
+import { useRef } from "react";
 import {
   Container,
   Stack,
-  Flex,
   Box,
   Heading,
   Text,
   Button,
-  Image,
   Icon,
-  IconButton,
-  IconProps,
-  useColorModeValue,
+  SimpleGrid,
 } from "@chakra-ui/react";
 
 import { BiSolidMessageDetail } from "react-icons/bi";
 
 import LandingNav from "../components/LandingNav";
+import LandingContributor from "../components/LandingContributor";
+import LandingFooter from "../components/LandingFooter";
 
 import { useTitle } from "../hooks/useTitle";
 
-const Blob = (props: IconProps) => {
-  return (
-    <Icon
-      width={"100%"}
-      viewBox="0 0 578 440"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M239.184 439.443c-55.13-5.419-110.241-21.365-151.074-58.767C42.307 338.722-7.478 282.729.938 221.217c8.433-61.644 78.896-91.048 126.871-130.712 34.337-28.388 70.198-51.348 112.004-66.78C282.34 8.024 325.382-3.369 370.518.904c54.019 5.115 112.774 10.886 150.881 49.482 39.916 40.427 49.421 100.753 53.385 157.402 4.13 59.015 11.255 128.44-30.444 170.44-41.383 41.683-111.6 19.106-169.213 30.663-46.68 9.364-88.56 35.21-135.943 30.551z"
-        fill="currentColor"
-      />
-    </Icon>
-  );
-};
-
 const Landing = () => {
+  const lineupRef = useRef(null);
+
   useTitle("Welcome");
 
   return (
     <div>
-      <LandingNav />
-      <Container maxW={"7xl"}>
+      <LandingNav lineupRef={lineupRef} />
+      <Container maxW={"7xl"} my={"100px"} p={4}>
         <Stack
           align={"center"}
           spacing={{ base: 8, md: 10 }}
           py={{ base: 20, md: 28 }}
-          direction={{ base: "column", md: "row" }}
+          direction={{ base: "column" }}
         >
           <Stack flex={1} spacing={{ base: 5, md: 10 }}>
-            <Heading
-              lineHeight={1.1}
-              fontWeight={600}
-              fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
-            >
+            <Heading lineHeight={1.1} fontWeight={600}>
               <Text
+                fontSize={{ base: "5xl", sm: "4xl", lg: "6xl" }}
                 as={"span"}
                 position={"relative"}
                 _after={{
@@ -74,7 +53,11 @@ const Landing = () => {
                 Write once,
               </Text>
               <br />
-              <Text as={"span"} color={"blue.400"}>
+              <Text
+                fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
+                as={"span"}
+                color={"blue.400"}
+              >
                 use everywhere!
               </Text>
             </Heading>
@@ -109,54 +92,42 @@ const Landing = () => {
               </Button>
             </Stack>
           </Stack>
-          <Flex
-            flex={1}
-            justify={"center"}
-            align={"center"}
-            position={"relative"}
-            w={"full"}
-          >
-            <Blob
-              w={"150%"}
-              h={"150%"}
-              position={"absolute"}
-              top={"-20%"}
-              left={0}
-              zIndex={-1}
-              color={useColorModeValue("blue.50", "blue.400")}
-            />
-            <Box
-              position={"relative"}
-              height={"300px"}
-              rounded={"2xl"}
-              boxShadow={"2xl"}
-              width={"full"}
-              overflow={"hidden"}
-            >
-              <IconButton
-                aria-label={"Play Button"}
-                variant={"ghost"}
-                _hover={{ bg: "transparent" }}
-                // icon={<PlayIcon w={12} h={12} />}
-                size={"lg"}
-                color={"white"}
-                position={"absolute"}
-                left={"50%"}
-                top={"50%"}
-                transform={"translateX(-50%) translateY(-50%)"}
-              />
-              <Image
-                alt={"Hero Image"}
-                fit={"cover"}
-                align={"center"}
-                w={"100%"}
-                h={"100%"}
-                src={"./banner1.jpg"}
-              />
-            </Box>
-          </Flex>
         </Stack>
       </Container>
+      <Box
+        ref={lineupRef}
+        maxW={"7xl"}
+        mx={"auto"}
+        mt={"100px"}
+        mb={"200px"}
+        p={4}
+      >
+        <p className="font-bold text-2xl mb-10">Team Lineup</p>
+        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
+          <LandingContributor
+            avatar={"./contributor/nhatdang.jpg"}
+            name={"Nguyen Nhat Dang"}
+            text={"Leader, Developer"}
+            facebook={"https://www.facebook.com/dageng.252"}
+            github={"https://github.com/dang252"}
+          />
+          <LandingContributor
+            avatar={"./contributor/minhtri.jpg"}
+            name={"Le Minh Tri"}
+            text={"Developer"}
+            facebook={"https://www.facebook.com/minhtrifit"}
+            github={"https://github.com/minhtrifit"}
+          />
+          <LandingContributor
+            avatar={"./contributor/giabao.jpg"}
+            name={"Tran Gia Bao"}
+            text={"Developer"}
+            facebook={"https://www.facebook.com/profile.php?id=100010425813591"}
+            github={"https://github.com/trangiabao2702"}
+          />
+        </SimpleGrid>
+      </Box>
+      <LandingFooter />
     </div>
   );
 };

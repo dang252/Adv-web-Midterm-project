@@ -9,13 +9,7 @@ import {
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 
-interface PropType {
-  lineupRef: any;
-}
-
-const LandingNav = (props: PropType) => {
-  const { lineupRef } = props;
-
+const RegisterNav = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -26,22 +20,6 @@ const LandingNav = (props: PropType) => {
             <Link to="/">
               <Box>Logo</Box>
             </Link>
-            <Box
-              className="hover:cursor-pointer"
-              onClick={() => {
-                window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-              }}
-            >
-              Home
-            </Box>
-            <Box
-              className="hover:cursor-pointer"
-              onClick={() => {
-                lineupRef.current?.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              About
-            </Box>
           </Flex>
 
           <Flex alignItems={"center"}>
@@ -54,9 +32,6 @@ const LandingNav = (props: PropType) => {
                   Login
                 </Text>
               </Link>
-              <Link to="/register">
-                <Button colorScheme="blue">Register</Button>
-              </Link>
             </Flex>
           </Flex>
         </Flex>
@@ -65,4 +40,4 @@ const LandingNav = (props: PropType) => {
   );
 };
 
-export default LandingNav;
+export default RegisterNav;
