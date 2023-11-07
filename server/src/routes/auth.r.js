@@ -9,8 +9,9 @@ const router = Router();
  * @swagger
  * tags:
  *   name: /auth
- *   description: API for user authentication
+ *   description: API for user's authentication
  */
+
 /**
  * @swagger
  * /auth/register:
@@ -53,7 +54,7 @@ const router = Router();
  *         application/json:
  *           schema:
  *             type: string
- *             example: Email/Phone already exists!
+ *             example: 409 Email/Phone already exists!
  *     '500':
  *       $ref: '#/components/responses/500'
  */
@@ -91,18 +92,21 @@ router.post("/register", authController.register);
  *               accessToken:
  *                 type: string
  *                 description: JWT access token
+ *               refreshToken:
+ *                 type: string
+ *                 description: JWT refresh token
  *     '401':
  *       content:
  *         application/json:
  *           schema:
  *             type: string
- *             example: Wrong password!
+ *             example: 401 Wrong password!
  *     '404':
  *       content:
  *         application/json:
  *           schema:
  *             type: string
- *             example: Username doesn't exist!
+ *             example: 404 Username doesn't exist!
  *     '500':
  *       $ref: '#/components/responses/500'
  */
@@ -126,6 +130,9 @@ router.post("/login", authController.login);
  *               accessToken:
  *                 type: string
  *                 description: JWT access token
+ *               refreshToken:
+ *                 type: string
+ *                 description: JWT refresh token
  *     '401':
  *       $ref: '#/components/responses/401'
  *     '403':

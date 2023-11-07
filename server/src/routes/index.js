@@ -7,9 +7,9 @@ import authRouter from "./auth.r.js";
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 function router(app) {
-    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-   /**
+  /**
    * @swagger
    *  components:
    *    securitySchemes:
@@ -69,7 +69,6 @@ function router(app) {
    *            type: string
    *            description: user's email
    */
-
   app.use("/auth", authRouter);
 }
 

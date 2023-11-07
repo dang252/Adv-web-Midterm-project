@@ -12,7 +12,9 @@ let refreshTokens = [];
 const generateAccessToken = (user) => {
   const { password, ...infoUser } = user._doc;
 
-  return jwt.sign(infoUser, process.env.JWT_ACCESS_KEY, { expiresIn: process.env.EXPIRE_TIME_ACCESS_KEY });
+  return jwt.sign(infoUser, process.env.JWT_ACCESS_KEY, {
+    expiresIn: process.env.EXPIRE_TIME_ACCESS_KEY,
+  });
 };
 
 // generate JWT_REFRESH_TOKEN
@@ -71,13 +73,13 @@ const authController = {
       });
 
       if (user === null) {
-        return res.status(404).json("Username doesn't exist!");
+        return res.status(404).json("404 Username doesn't exist!");
       }
 
       // check password
       const validPassword = await bcrypt.compare(req.body.password, user.password);
       if (!validPassword) {
-        return res.status(404).json("Wrong password!");
+        return res.status(404).json("404 Wrong password!");
       } else {
         // create access and refresh tokens
         const accessToken = generateAccessToken(user);
@@ -94,7 +96,10 @@ const authController = {
           sameSite: "none",
         });
 
-        return res.status(200).json({ accessToken: accessToken });
+        return res.status(200).json({
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        });
       }
     } catch (error) {
       console.log(error);
