@@ -1,18 +1,20 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const dotenv = require("dotenv");
-const cookieParser = require("cookie-parser");
-const mongoose = require("mongoose");
+import path from "path";
+import cors from "cors";
+import express from "express";
+import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
+import { fileURLToPath } from "url";
+import "dotenv/config";
 
-const router = require("./routes");
-const { mongoURI, mongoOptions } = require("./config/mongo");
+import router from "./routes/index.js";
+import { mongoURI, mongoOptions } from "./config/mongo.js";
 
 const port = process.env.PORT || 5000;
 const app = express();
 
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.urlencoded({ extended: true }));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());

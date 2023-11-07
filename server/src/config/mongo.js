@@ -1,8 +1,5 @@
-console.log(process.env.DATABASE_USERNAME)
+export const mongoURI = `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@zu2702.gtzrpwg.mongodb.net/${process.env.DATABASE_NAME}`;
 
-module.exports = {
-    mongoURI: `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@zu2702.gtzrpwg.mongodb.net/`,
-    mongoOptions: {
-      useNewUrlParser: true,
-    },
-  };
+export const mongoOptions = {
+    
+};

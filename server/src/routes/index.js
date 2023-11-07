@@ -1,3 +1,3 @@
 function router(app) {}
 
-module.exports = router;
+export default router;
