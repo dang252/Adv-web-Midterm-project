@@ -3,6 +3,7 @@ import swaggerUi from "swagger-ui-express";
 
 import swaggerOptions from "../config/swagger.js";
 import authRouter from "./auth.r.js";
+import userRouter from "./user.r.js";
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
@@ -56,9 +57,6 @@ function router(app) {
    *      UserInfo:
    *        type: object
    *        properties:
-   *          id:
-   *            type: integer
-   *            description: user's id
    *          name:
    *            type: string
    *            description: user's name
@@ -70,6 +68,7 @@ function router(app) {
    *            description: user's email
    */
   app.use("/auth", authRouter);
+  app.use("/user", userRouter);
 }
 
 export default router;

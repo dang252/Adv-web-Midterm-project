@@ -75,7 +75,7 @@ router.post("/register", authController.register);
  *           properties:
  *             username:
  *               type: string
- *               description: user's name
+ *               description: user's username or phone
  *             password:
  *               type: string
  *               description: user's password

@@ -9,19 +9,23 @@ import userModel from "../models/user.m.js";
 let refreshTokens = [];
 
 // generate JWT_ACCESS_TOKEN
-const generateAccessToken = (user) => {
-  const { password, ...infoUser } = user._doc;
-
-  return jwt.sign(infoUser, process.env.JWT_ACCESS_KEY, {
-    expiresIn: process.env.EXPIRE_TIME_ACCESS_KEY,
-  });
+const generateAccessToken = (userId) => {
+  return jwt.sign(
+    {
+      user_id: userId,
+    },
+    process.env.JWT_ACCESS_KEY,
+    {
+      expiresIn: process.env.EXPIRE_TIME_ACCESS_KEY,
+    }
+  );
 };
 
 // generate JWT_REFRESH_TOKEN
-const generateRefreshToken = (user) => {
+const generateRefreshToken = (userId) => {
   return jwt.sign(
     {
-      userId: user._id,
+      user_id: userId,
     },
     process.env.JWT_REFRESH_KEY,
     { expiresIn: process.env.EXPIRE_TIME_REFRESH_KEY }
@@ -82,8 +86,8 @@ const authController = {
         return res.status(404).json("404 Wrong password!");
       } else {
         // create access and refresh tokens
-        const accessToken = generateAccessToken(user);
-        const refreshToken = generateRefreshToken(user);
+        const accessToken = generateAccessToken(user._id.toString());
+        const refreshToken = generateRefreshToken(user._id.toString());
 
         // add refresh token to list
         refreshTokens.push(refreshToken);
@@ -133,14 +137,13 @@ const authController = {
         // get user's information
         const objectId = new Types.ObjectId(userInfo.userId);
         const user = await userModel.findOne({ _id: objectId });
-        const { password, ...info } = user._doc;
-        console.log(info);
+
         // delete old refresh token
         refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
 
         // create new access and refresh tokens
-        const newAccessToken = generateAccessToken(user);
-        const newRefreshToken = generateRefreshToken(user);
+        const newAccessToken = generateAccessToken(user._id.toString());
+        const newRefreshToken = generateRefreshToken(user._id.toString());
 
         // add new refresh token to list
         refreshTokens.push(newRefreshToken);
