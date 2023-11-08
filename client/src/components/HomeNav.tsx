@@ -31,7 +31,9 @@ const HomeNav = () => {
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <Flex gap={5}>
             <Link to="/home">
-              <Box>Logo</Box>
+              <div className="w-[150px]">
+                <img className="w-[100%]" src="./moodlab-logo.jpg" alt="logo" />
+              </div>
             </Link>
           </Flex>
 

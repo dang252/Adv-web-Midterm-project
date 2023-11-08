@@ -13,11 +13,17 @@ const LoginNav = () => {
 
   return (
     <div className="fixed w-[100%] top-0 z-20">
-      <Box bg={useColorModeValue("gray.100", "gray.900")} px={14}>
-        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+      <Box
+        bg={useColorModeValue("gray.100", "gray.900")}
+        px={14}
+        py={{ base: 4, md: 2 }}
+      >
+        <Flex alignItems={"center"} justifyContent={"space-between"}>
           <Flex gap={5}>
             <Link to="/">
-              <Box>Logo</Box>
+              <div className="w-[150px]">
+                <img className="w-[100%]" src="./moodlab-logo.jpg" alt="logo" />
+              </div>
             </Link>
           </Flex>
 
