@@ -26,8 +26,11 @@ export const registerAccount = createAsyncThunk(
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/register`,
         {
-          //   signal: thunkAPI.signal,
-          account: account,
+          // signal: thunkAPI.signal,
+          name: account.name,
+          phone: account.phone,
+          email: account.email,
+          password: account.password,
         }
       );
 
