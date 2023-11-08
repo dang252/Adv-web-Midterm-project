@@ -2,6 +2,7 @@ import {
   Text,
   Box,
   Flex,
+  Image,
   Button,
   useColorModeValue,
   useColorMode,
@@ -20,29 +21,41 @@ const LandingNav = (props: PropType) => {
 
   return (
     <div className="fixed w-[100%] top-0 z-20">
-      <Box bg={useColorModeValue("gray.100", "gray.900")} px={14}>
-        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-          <Flex gap={5}>
+      <Box
+        bg={useColorModeValue("gray.100", "gray.900")}
+        px={14}
+        py={{ base: 4, md: 2 }}
+      >
+        <Flex
+          flexDirection={{ base: "column", md: "row" }}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+        >
+          <div className="flex gap-3 flex-col items-center mb-6 md:mb-0 md:flex-row md:gap-10">
             <Link to="/">
-              <Box>Logo</Box>
+              <div className="w-[150px]">
+                <img className="w-[100%]" src="./moodlab-logo.jpg" alt="logo" />
+              </div>
             </Link>
-            <Box
-              className="hover:cursor-pointer"
-              onClick={() => {
-                window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-              }}
-            >
-              Home
-            </Box>
-            <Box
-              className="hover:cursor-pointer"
-              onClick={() => {
-                lineupRef.current?.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              About
-            </Box>
-          </Flex>
+            <Flex gap={5}>
+              <Box
+                className="hover:text-blue-400 hover:cursor-pointer"
+                onClick={() => {
+                  window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+                }}
+              >
+                Home
+              </Box>
+              <Box
+                className="hover:text-blue-400 hover:cursor-pointer"
+                onClick={() => {
+                  lineupRef.current?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                About
+              </Box>
+            </Flex>
+          </div>
 
           <Flex alignItems={"center"}>
             <Flex alignItems={"center"} gap={5}>

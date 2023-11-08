@@ -13,10 +13,14 @@ import { AiFillGithub } from "react-icons/ai";
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
-const Logo = (props: any) => {
-  console.log("footer props:", props);
+const Logo = () => {
+  // console.log("footer props:", props);
 
-  return <p className="text-xl font-bold">Logo</p>;
+  return (
+    <div className="w-[150px]">
+      <img className="w-[100%]" src="./moodlab-logo.jpg" alt="logo" />
+    </div>
+  );
 
   //   return (
   //     <svg
@@ -105,7 +109,7 @@ const LandingFooter = () => {
           justify={{ base: "center", md: "space-between" }}
           align={{ base: "center", md: "center" }}
         >
-          <Text>©Copyright 2023: team-name</Text>
+          <Text>©Copyright 2023: Moodlab</Text>
           <Stack direction={"row"} spacing={6}>
             <SocialButton
               label={"Github"}

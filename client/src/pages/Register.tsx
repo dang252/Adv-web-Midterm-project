@@ -10,10 +10,17 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { toast } from "react-toastify";
 
 import { useTitle } from "../hooks/useTitle";
 
 import { Link } from "react-router-dom";
+
+import { useAppDispatch } from "../redux/hooks";
+
+import { registerAccount } from "../redux/reducers/user.reducer";
+
+import { UserAccount } from "../types";
 
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
@@ -23,21 +30,27 @@ import * as Yup from "yup";
 import RegisterNav from "../components/RegisterNav";
 
 interface FormInputs {
-  name: string;
+  name?: string;
   email: string;
+  phone: string;
   username: string;
   password: string;
   confirm_password: string;
 }
 
 const Register = () => {
+  const dispathAsync = useAppDispatch();
+
   const formSchema = Yup.object().shape({
-    name: Yup.string()
-      .required("Password is required")
-      .min(3, "Password must be at 3 char long"),
+    // name: Yup.string()
+    //   .required("Password is required")
+    //   .min(3, "Password must be at 3 char long"),
     email: Yup.string()
       .required("Password is required")
       .min(3, "Password must be at 3 char long"),
+    phone: Yup.string()
+      .required("Phone is required")
+      .min(10, "Phone must be at 10 char long"),
     username: Yup.string()
       .required("Password is required")
       .min(3, "Password must be at 3 char long"),
@@ -59,14 +72,40 @@ const Register = () => {
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm(formOptions);
 
-  useTitle("Register");
+  useTitle("Moodlab | Register");
 
-  const onSubmit = (data: FormInputs) => {
-    console.log(data);
+  const onSubmit = async (data: FormInputs) => {
+    const UserAccount: UserAccount = {
+      username: data.username,
+      password: data.password,
+      phone: data.phone,
+      email: data.email,
+    };
+
+    const promise = dispathAsync(registerAccount(UserAccount));
+
+    promise.unwrap().then((res) => {
+      console.log("check res:", res);
+      toast.success("Register account successfully");
+    });
+
+    promise.unwrap().catch((err) => {
+      console.log("Check err:", err);
+      toast.error("Register account failed");
+    });
+
+    reset({
+      username: "",
+      password: "",
+      confirm_password: "",
+      email: "",
+      phone: "",
+    });
   };
 
   return (
@@ -105,20 +144,6 @@ const Register = () => {
                   className="flex flex-col gap-8"
                 >
                   <FormControl>
-                    <FormLabel htmlFor="username">Fullname</FormLabel>
-                    <Input id="name" type="text" {...register("name", {})} />
-                    <Text color={"red.400"}>
-                      <ErrorMessage errors={errors} name="name" />
-                    </Text>
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel htmlFor="username">Email</FormLabel>
-                    <Input id="email" type="email" {...register("email", {})} />
-                    <Text color={"red.400"}>
-                      <ErrorMessage errors={errors} name="email" />
-                    </Text>
-                  </FormControl>
-                  <FormControl>
                     <FormLabel htmlFor="username">Username</FormLabel>
                     <Input
                       id="username"
@@ -129,6 +154,23 @@ const Register = () => {
                       <ErrorMessage errors={errors} name="username" />
                     </Text>
                   </FormControl>
+
+                  <FormControl>
+                    <FormLabel htmlFor="username">Email</FormLabel>
+                    <Input id="email" type="email" {...register("email", {})} />
+                    <Text color={"red.400"}>
+                      <ErrorMessage errors={errors} name="email" />
+                    </Text>
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel htmlFor="username">Phone</FormLabel>
+                    <Input id="name" type="text" {...register("phone", {})} />
+                    <Text color={"red.400"}>
+                      <ErrorMessage errors={errors} name="phone" />
+                    </Text>
+                  </FormControl>
+
                   <FormControl>
                     <FormLabel htmlFor="password">Password</FormLabel>
                     <Input
@@ -140,6 +182,7 @@ const Register = () => {
                       <ErrorMessage errors={errors} name="password" />
                     </Text>
                   </FormControl>
+
                   <FormControl>
                     <FormLabel htmlFor="password">Confirm Password</FormLabel>
                     <Input
@@ -151,6 +194,7 @@ const Register = () => {
                       <ErrorMessage errors={errors} name="confirm_password" />
                     </Text>
                   </FormControl>
+
                   <Button mt={4} colorScheme="blue" type="submit">
                     Register
                   </Button>

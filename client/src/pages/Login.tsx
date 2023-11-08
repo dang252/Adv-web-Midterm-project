@@ -32,7 +32,7 @@ const Login = () => {
     handleSubmit,
   } = useForm<FormInputs>();
 
-  useTitle("Login");
+  useTitle("Moodlab | Login");
 
   const onSubmit = (data: FormInputs) => {
     console.log(data);

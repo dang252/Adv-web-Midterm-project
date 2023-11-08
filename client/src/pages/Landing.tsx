@@ -21,7 +21,7 @@ import { useTitle } from "../hooks/useTitle";
 const Landing = () => {
   const lineupRef = useRef(null);
 
-  useTitle("Welcome");
+  useTitle("Moodlab | Welcome");
 
   return (
     <div>
@@ -50,7 +50,7 @@ const Landing = () => {
                   zIndex: -1,
                 }}
               >
-                Write once,
+                Moodlab,
               </Text>
               <br />
               <Text
@@ -58,13 +58,11 @@ const Landing = () => {
                 as={"span"}
                 color={"blue.400"}
               >
-                use everywhere!
+                Welcome to our world!
               </Text>
             </Heading>
             <Text color={"gray.500"}>
-              Snippy is a rich coding snippets app that lets you create your own
-              code snippets, categorize them, and even sync them in the cloud so
-              you can use them anywhere. All that is free!
+              We provide solutions to make your learning more professional!
             </Text>
             <Stack
               spacing={{ base: 4, sm: 6 }}
