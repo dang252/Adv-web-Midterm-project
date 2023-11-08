@@ -30,10 +30,10 @@ import * as Yup from "yup";
 import RegisterNav from "../components/RegisterNav";
 
 interface FormInputs {
-  name?: string;
+  name: string;
   email: string;
   phone: string;
-  username: string;
+  username?: string;
   password: string;
   confirm_password: string;
 }
@@ -42,18 +42,18 @@ const Register = () => {
   const dispathAsync = useAppDispatch();
 
   const formSchema = Yup.object().shape({
-    // name: Yup.string()
-    //   .required("Password is required")
-    //   .min(3, "Password must be at 3 char long"),
+    name: Yup.string()
+      .required("Name is required")
+      .min(3, "Name must be at 3 char long"),
     email: Yup.string()
       .required("Password is required")
       .min(3, "Password must be at 3 char long"),
     phone: Yup.string()
       .required("Phone is required")
       .min(10, "Phone must be at 10 char long"),
-    username: Yup.string()
-      .required("Password is required")
-      .min(3, "Password must be at 3 char long"),
+    // username: Yup.string()
+    //   .required("Password is required")
+    //   .min(3, "Password must be at 3 char long"),
     password: Yup.string()
       .required("Password is required")
       .min(3, "Password must be at 3 char long"),
@@ -63,12 +63,6 @@ const Register = () => {
   });
 
   const formOptions = { resolver: yupResolver(formSchema) };
-
-  // const {
-  //   register,
-  //   formState: { errors },
-  //   handleSubmit,
-  // } = useForm<FormInputs>(formOptions);
 
   const {
     register,
@@ -81,7 +75,7 @@ const Register = () => {
 
   const onSubmit = async (data: FormInputs) => {
     const UserAccount: UserAccount = {
-      username: data.username,
+      name: data.name,
       password: data.password,
       phone: data.phone,
       email: data.email,
@@ -100,7 +94,7 @@ const Register = () => {
     });
 
     reset({
-      username: "",
+      name: "",
       password: "",
       confirm_password: "",
       email: "",
@@ -144,19 +138,15 @@ const Register = () => {
                   className="flex flex-col gap-8"
                 >
                   <FormControl>
-                    <FormLabel htmlFor="username">Username</FormLabel>
-                    <Input
-                      id="username"
-                      type="text"
-                      {...register("username", {})}
-                    />
+                    <FormLabel htmlFor="name">Name</FormLabel>
+                    <Input id="name" type="text" {...register("name", {})} />
                     <Text color={"red.400"}>
-                      <ErrorMessage errors={errors} name="username" />
+                      <ErrorMessage errors={errors} name="name" />
                     </Text>
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel htmlFor="username">Email</FormLabel>
+                    <FormLabel htmlFor="email">Email</FormLabel>
                     <Input id="email" type="email" {...register("email", {})} />
                     <Text color={"red.400"}>
                       <ErrorMessage errors={errors} name="email" />
@@ -164,8 +154,8 @@ const Register = () => {
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel htmlFor="username">Phone</FormLabel>
-                    <Input id="name" type="text" {...register("phone", {})} />
+                    <FormLabel htmlFor="phone">Phone</FormLabel>
+                    <Input id="phone" type="text" {...register("phone", {})} />
                     <Text color={"red.400"}>
                       <ErrorMessage errors={errors} name="phone" />
                     </Text>
@@ -184,7 +174,9 @@ const Register = () => {
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel htmlFor="password">Confirm Password</FormLabel>
+                    <FormLabel htmlFor="confirm_password">
+                      Confirm Password
+                    </FormLabel>
                     <Input
                       id="confirm_password"
                       type="password"
