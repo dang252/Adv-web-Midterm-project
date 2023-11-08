@@ -5,11 +5,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
 const ProtectedRoute = ({ children }: any) => {
-  const username: string = useSelector<RootState, string>(
-    (state) => state.user.username
+  const accessToken: string = useSelector<RootState, string>(
+    (state) => state.user.accessToken
   );
 
-  if (!username) {
+  if (!accessToken) {
     return <Navigate to="/" />;
   }
 

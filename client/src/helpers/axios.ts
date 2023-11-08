@@ -35,7 +35,7 @@ export const axiosInterRes = axios.interceptors.response.use(
 
     if (originalRequest.url.includes("/auth/refresh")) {
       console.log("Login time out");
-      sessionStorage.clear();
+      // sessionStorage.clear();
     }
 
     if (originalRequest.url.includes("/auth/verify")) {
@@ -43,8 +43,9 @@ export const axiosInterRes = axios.interceptors.response.use(
         .getItem("refreshToken")
         ?.toString()
         .replace(/^"(.*)"$/, "$1");
+
       const rs = await axios.post(
-        `http://localhost:5500/auth/refresh`,
+        `${import.meta.env.VITE_API_URL}/auth/refresh`,
         {},
         {
           headers: {

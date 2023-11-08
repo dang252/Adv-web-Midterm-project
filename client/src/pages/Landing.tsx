@@ -58,7 +58,7 @@ const Landing = () => {
                 as={"span"}
                 color={"blue.400"}
               >
-                Welcome to our world!
+                Welcome to our workspace!
               </Text>
             </Heading>
             <Text color={"gray.500"}>
