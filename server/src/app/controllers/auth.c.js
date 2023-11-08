@@ -4,9 +4,7 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 
 import userModel from "../models/user.m.js";
-
-// list current refresh tokens
-let refreshTokens = [];
+import refreshTokensModel from "../models/refreshTokens.m.js";
 
 // generate JWT_ACCESS_TOKEN
 const generateAccessToken = (userId) => {
@@ -90,14 +88,9 @@ const authController = {
         const refreshToken = generateRefreshToken(user._id.toString());
 
         // add refresh token to list
-        refreshTokens.push(refreshToken);
-
-        // save refresh token in cookie
-        res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-          secure: true,
-          path: "/",
-          sameSite: "none",
+        await refreshTokensModel.create({
+          user_id: user._id.toString(),
+          token: refreshToken,
         });
 
         return res.status(200).json({
@@ -116,12 +109,14 @@ const authController = {
   requestNewRefreshToken: async (req, res) => {
     try {
       // take refresh token from user
-      const refreshToken = req.cookies.refreshToken;
+      const refreshToken = req.body.refreshToken;
 
       if (!refreshToken) return res.status(401).json("401 Unauthorized!");
 
       // check if we have a refresh token but it isn't our list refresh tokens
-      if (!refreshTokens.includes(refreshToken)) {
+      const token = await refreshTokensModel.findOne({ token: refreshToken });
+
+      if (!token) {
         return res.status(403).json("403 Forbidden!");
       }
 
@@ -134,29 +129,28 @@ const authController = {
           return res.status(500).json("500 Internal Server Error!");
         }
 
-        // get user's information
-        const objectId = new Types.ObjectId(userInfo.userId);
-        const user = await userModel.findOne({ _id: objectId });
+        // if id not match
+        if (token.user_id != userInfo.user_id) {
+          return res.status(401).json("401 Unauthorized!");
+        }
 
         // delete old refresh token
-        refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+        await refreshTokensModel.deleteOne({ user_id: token.user_id });
 
         // create new access and refresh tokens
-        const newAccessToken = generateAccessToken(user._id.toString());
-        const newRefreshToken = generateRefreshToken(user._id.toString());
+        const newAccessToken = generateAccessToken(token.user_id);
+        const newRefreshToken = generateRefreshToken(token.user_id);
 
         // add new refresh token to list
-        refreshTokens.push(newRefreshToken);
-
-        // save new refresh token in cookie
-        res.cookie("refreshToken", newRefreshToken, {
-          httpOnly: true,
-          secure: true,
-          path: "/",
-          sameSite: "none",
+        await refreshTokensModel.create({
+          user_id: token.user_id,
+          token: newRefreshToken,
         });
 
-        res.status(200).json({ accessToken: newAccessToken });
+        res.status(200).json({
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+        });
       });
     } catch (error) {
       console.log(error);
@@ -165,14 +159,20 @@ const authController = {
     }
   },
 
-  // [POST] /logout
+  // [POST] /logout/:id
   logout: async (req, res) => {
     try {
-      // delete refresh token from list and cookie
-      refreshTokens = refreshTokens.filter((token) => token !== req.cookies.refreshToken);
-      res.clearCookie("refreshToken");
+      // delete refresh token from database
+      const result = await refreshTokensModel.deleteOne({
+        user_id: req.params.id,
+        token: req.body.refreshToken,
+      });
 
-      res.status(200).json("Log out successfully!");
+      if (result.deletedCount === 1) {
+        res.status(200).json("Log out successfully!");
+      } else {
+        res.status(400).json("Log out unsuccessfully!");
+      }
     } catch (error) {
       console.log(error);
 

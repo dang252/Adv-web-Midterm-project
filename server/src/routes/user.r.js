@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import userController from "../app/controllers/user.c.js";
+import authenticationMiddleware from "../middleware/authentication.js";
 
 const router = Router();
 
@@ -17,6 +18,8 @@ const router = Router();
  *  get:
  *   summary: get user's profile
  *   tags: [/user]
+ *   security:
+ *     - tokenAuth: []
  *   parameters:
  *     - in: path
  *       name: id
@@ -34,7 +37,7 @@ const router = Router();
  *     '500':
  *       $ref: '#/components/responses/500'
  */
-router.get("/:id", userController.getProfile);
+router.get("/:id", authenticationMiddleware.verifyToken, userController.getProfile);
 
 /**
  * @swagger
@@ -42,6 +45,8 @@ router.get("/:id", userController.getProfile);
  *  post:
  *   summary: update user's profile
  *   tags: [/user]
+ *   security:
+ *     - tokenAuth: []
  *   parameters:
  *     - in: path
  *       name: id
@@ -79,6 +84,6 @@ router.get("/:id", userController.getProfile);
  *     '500':
  *       $ref: '#/components/responses/500'
  */
-router.post("/:id", userController.updateProfile);
+router.post("/:id", authenticationMiddleware.verifyToken, userController.updateProfile);
 
 export default router;

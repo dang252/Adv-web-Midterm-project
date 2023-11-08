@@ -75,7 +75,7 @@ router.post("/register", authController.register);
  *           properties:
  *             username:
  *               type: string
- *               description: user's username or phone
+ *               description: user's email or phone
  *             password:
  *               type: string
  *               description: user's password
@@ -118,8 +118,16 @@ router.post("/login", authController.login);
  *  post:
  *   summary: user request a new refresh token
  *   tags: [/auth]
- *   security:
- *     - cookieAuth: []
+ *   requestBody:
+ *     required: true
+ *     content:
+ *       application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             refreshToken:
+ *               type: string
+ *               description: user's refresh token
  *   responses:
  *     '200':
  *       content:
@@ -144,13 +152,26 @@ router.post("/refresh", authController.requestNewRefreshToken);
 
 /**
  * @swagger
- * /auth/logout:
+ * /auth/logout/{id}:
  *  post:
  *   summary: user logout
  *   tags: [/auth]
- *   security:
- *     - cookieAuth: []
- *     - tokenAuth: []
+ *   parameters:
+ *     - in: path
+ *       name: id
+ *       required: true
+ *       type: string
+ *       description: User's ID
+ *   requestBody:
+ *     required: true
+ *     content:
+ *       application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             refreshToken:
+ *               type: string
+ *               description: user's refresh token
  *   responses:
  *     '200':
  *       content:
@@ -158,6 +179,12 @@ router.post("/refresh", authController.requestNewRefreshToken);
  *           schema:
  *             type: string
  *             example: Log out successfully!
+ *     '400':
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: string
+ *             example: Log out unsuccessfully!
  *     '401':
  *       $ref: '#/components/responses/401'
  *     '403':
@@ -165,6 +192,6 @@ router.post("/refresh", authController.requestNewRefreshToken);
  *     '500':
  *       $ref: '#/components/responses/500'
  */
-router.post("/logout", authenticationMiddleware.verifyToken, authController.logout);
+router.post("/logout/:id", authenticationMiddleware.verifyToken, authController.logout);
 
 export default router;
