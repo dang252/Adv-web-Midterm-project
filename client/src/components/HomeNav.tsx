@@ -70,7 +70,9 @@ const HomeNav = () => {
                   </Center>
                   <br />
                   <MenuDivider />
-                  <MenuItem>Account Settings</MenuItem>
+                  <Link to="/home/edit">
+                    <MenuItem>Edit Profile</MenuItem>
+                  </Link>
                   <MenuItem>Logout</MenuItem>
                 </MenuList>
               </Menu>

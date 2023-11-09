@@ -10,36 +10,30 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { toast } from "react-toastify";
-
-import { useTitle } from "../hooks/useTitle";
-
-import { Link } from "react-router-dom";
-
-import { useAppDispatch } from "../redux/hooks";
-
-import { registerAccount } from "../redux/reducers/user.reducer";
 
 import { UserAccount } from "../types";
+
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+// import { useAppDispatch } from "../redux/hooks";
 
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
-import RegisterNav from "../components/RegisterNav";
+import Loading from "../components/Loading";
 
 interface FormInputs {
   name: string;
-  email: string;
   phone: string;
-  username?: string;
-  password: string;
-  confirm_password: string;
+  email: string;
 }
 
-const Register = () => {
-  const dispathAsync = useAppDispatch();
+const EditProfile = () => {
+  const isLoading = useSelector<RootState, boolean | undefined>(
+    (state) => state.user.isLoading
+  );
 
   const formSchema = Yup.object().shape({
     name: Yup.string()
@@ -51,15 +45,6 @@ const Register = () => {
     phone: Yup.string()
       .required("Phone is required")
       .min(10, "Phone must be at 10 char long"),
-    // username: Yup.string()
-    //   .required("Username is required")
-    //   .min(3, "Username must be at 3 char long"),
-    password: Yup.string()
-      .required("Password is required")
-      .min(3, "Password must be at 3 char long"),
-    confirm_password: Yup.string()
-      .required("Confirm password is required")
-      .oneOf([Yup.ref("password")], "Passwords does not match"),
   });
 
   const formOptions = { resolver: yupResolver(formSchema) };
@@ -67,36 +52,21 @@ const Register = () => {
   const {
     register,
     reset,
-    handleSubmit,
     formState: { errors },
+    handleSubmit,
   } = useForm(formOptions);
-
-  useTitle("Moodlab | Register");
 
   const onSubmit = async (data: FormInputs) => {
     const UserAccount: UserAccount = {
       name: data.name,
-      password: data.password,
       phone: data.phone,
       email: data.email,
     };
 
-    const promise = dispathAsync(registerAccount(UserAccount));
-
-    promise.unwrap().then((res) => {
-      console.log("check res:", res);
-      toast.success("Register account successfully");
-    });
-
-    promise.unwrap().catch((err) => {
-      console.log("Check err:", err);
-      toast.error("Register account failed");
-    });
+    console.log(UserAccount);
 
     reset({
       name: "",
-      password: "",
-      confirm_password: "",
       email: "",
       phone: "",
     });
@@ -104,11 +74,11 @@ const Register = () => {
 
   return (
     <div>
-      <RegisterNav />
       <Flex
-        minH={"100vh"}
+        direction={"column"}
+        minH={"90vh"}
         align={"center"}
-        justify={"center"}
+        // justify={"center"}
         bg={useColorModeValue("gray.50", "gray.800")}
       >
         <Flex
@@ -124,7 +94,12 @@ const Register = () => {
             px={6}
           >
             <Stack align={"center"}>
-              <Heading fontSize={"4xl"}>Join With Our Team</Heading>
+              <Heading fontSize={"4xl"}>Edit Account Profile</Heading>
+              {isLoading && (
+                <div className="mt-5">
+                  <Loading />
+                </div>
+              )}
             </Stack>
             <Box
               rounded={"lg"}
@@ -161,52 +136,17 @@ const Register = () => {
                     </Text>
                   </FormControl>
 
-                  <FormControl>
-                    <FormLabel htmlFor="password">Password</FormLabel>
-                    <Input
-                      id="password"
-                      type="password"
-                      {...register("password", {})}
-                    />
-                    <Text color={"red.400"}>
-                      <ErrorMessage errors={errors} name="password" />
-                    </Text>
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel htmlFor="confirm_password">
-                      Confirm Password
-                    </FormLabel>
-                    <Input
-                      id="confirm_password"
-                      type="password"
-                      {...register("confirm_password", {})}
-                    />
-                    <Text color={"red.400"}>
-                      <ErrorMessage errors={errors} name="confirm_password" />
-                    </Text>
-                  </FormControl>
-
                   <Button mt={4} colorScheme="blue" type="submit">
-                    Register
+                    Edit
                   </Button>
                 </form>
               </Stack>
             </Box>
-            <Flex className="flex gap-1 justify-center">
-              <p>Already have account?</p>
-              <Link to="/login">
-                <Text color={"blue.400"}>Login now</Text>
-              </Link>
-            </Flex>
           </Stack>
-          {/* <div className="w-[60%] hidden xl:flex items-center">
-            <img className="w-[100%]" src="./register.jpg" alt="login_banner" />
-          </div> */}
         </Flex>
       </Flex>
     </div>
   );
 };
 
-export default Register;
+export default EditProfile;

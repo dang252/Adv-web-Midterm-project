@@ -20,19 +20,19 @@ import { RootState } from "../redux/store";
 import { useAppDispatch } from "../redux/hooks";
 
 import { UserAccount } from "../types";
-import {
-  loginAccount,
-  handleAccessToken,
-} from "../redux/reducers/user.reducer";
+import { loginAccount } from "../redux/reducers/user.reducer";
 
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 import { useTitle } from "../hooks/useTitle";
 
 import LoginNav from "../components/LoginNav";
+import Loading from "../components/Loading";
 
-import { axiosInterReq, axiosInterRes } from "../helpers/axios";
+// import { axiosInterReq, axiosInterRes } from "../helpers/axios";
 
 interface FormInputs {
   username: string;
@@ -43,26 +43,38 @@ const Login = () => {
   const dispathAsync = useAppDispatch();
   const navigate = useNavigate();
 
+  const formSchema = Yup.object().shape({
+    username: Yup.string()
+      .required("Email or Phone is required")
+      .min(3, "Email or Phone must be at 3 char long"),
+    password: Yup.string()
+      .required("Password is required")
+      .min(3, "Password must be at 3 char long"),
+  });
+
+  const formOptions = { resolver: yupResolver(formSchema) };
+
   const {
     register,
     reset,
     formState: { errors },
     handleSubmit,
-  } = useForm<FormInputs>();
+  } = useForm(formOptions);
 
   useTitle("Moodlab | Login");
-
-  axiosInterReq;
-  axiosInterRes;
 
   const isLogin = useSelector<RootState, boolean | undefined>(
     (state) => state.user.isLogin
   );
 
-  useEffect(() => {
-    dispathAsync(handleAccessToken());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const isLoading = useSelector<RootState, boolean | undefined>(
+    (state) => state.user.isLoading
+  );
+
+  // useEffect(() => {
+  //   dispathAsync(handleAccessToken());
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   useEffect(() => {
     if (isLogin) {
@@ -100,6 +112,7 @@ const Login = () => {
     <div>
       <LoginNav />
       <Flex
+        direction={"column"}
         minH={"100vh"}
         align={"center"}
         justify={"center"}
@@ -116,6 +129,11 @@ const Login = () => {
             <Heading fontSize={"4xl"} textAlign={"center"}>
               Login With Your Account
             </Heading>
+            {isLoading && (
+              <div className="mt-5">
+                <Loading />
+              </div>
+            )}
           </Stack>
           <Box
             rounded={"lg"}

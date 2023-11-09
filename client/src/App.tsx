@@ -4,12 +4,10 @@ import "react-toastify/dist/ReactToastify.css";
 
 import "./App.css";
 
-import ProtectedRoute from "./components/ProtectedRoute ";
-
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Home from "./pages/Home";
+import HomeRouter from "./pages/HomeRouter";
 
 const App = () => {
   return (
@@ -30,14 +28,7 @@ const App = () => {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/home/*" element={<HomeRouter />} />
       </Routes>
     </>
   );
