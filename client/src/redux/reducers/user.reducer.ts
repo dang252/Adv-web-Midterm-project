@@ -2,10 +2,12 @@ import { createReducer, createAsyncThunk } from "@reduxjs/toolkit";
 
 import axios from "axios";
 
-import { UserAccount } from "../../types";
+import { JwtPayload, UserAccount } from "../../types";
+import { jwtDecode } from "jwt-decode";
 
 // Interface declair
 interface UserState {
+  userId: string;
   username: string;
   password: string;
   name: string;
@@ -61,8 +63,15 @@ export const loginAccount = createAsyncThunk(
           password: account.password,
         }
       );
+      // const decodedToken = jwtDecode(response.data.accessToken) as JwtPayload
 
-      return response.data;
+      // const userId = decodedToken.user_id;
+
+      // const userInfo = await axios.get(
+      //   `${import.meta.env.VITE_API_URL}/user/${userId}`
+      // )
+      return response.data
+      // return { ...response.data, ...userInfo.data, userId: userId }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       //   if (error.name === "AxiosError") {
@@ -73,6 +82,33 @@ export const loginAccount = createAsyncThunk(
   }
 );
 
+export const getUserInfo = createAsyncThunk(
+  "user/getUserInfo",
+
+  async (account: UserAccount, thunkAPI) => {
+
+    try {
+      const accessToken = sessionStorage
+        .getItem("accessToken")
+        ?.toString()
+        .replace(/^"(.*)"$/, "$1");
+
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/user/${account.userId}`,
+        {
+          headers: {
+            token: `Bearer ${accessToken}`,
+          },
+          // withCredentials: true,
+        }
+      )
+      return res.data
+    }
+    catch (error: any) {
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+);
 export const handleAccessToken = createAsyncThunk(
   "user/handle_access_token",
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -124,11 +160,11 @@ export const handleRefreshToken = createAsyncThunk(
           {
             refreshToken: refreshToken,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${refreshToken}`,
-            },
-          }
+          // {
+          //   headers: {
+          //     Authorization: `Bearer ${refreshToken}`,
+          //   },
+          // }
         );
 
         return response.data;
@@ -174,9 +210,43 @@ export const handleEditProfile = createAsyncThunk(
     }
   }
 );
+export const logoutAccount = createAsyncThunk(
+  "user/logoutAccount",
 
+  async (account: UserAccount, thunkAPI) => {
+
+    try {
+      const accessToken = sessionStorage
+        .getItem("accessToken")
+        ?.toString()
+        .replace(/^"(.*)"$/, "$1");
+      const refreshToken = sessionStorage
+        .getItem("refreshToken")
+        ?.toString()
+        .replace(/^"(.*)"$/, "$1");
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/logout/${account.userId}`,
+        {
+          "refreshToken": refreshToken,
+        },
+        {
+          headers: {
+            token: `Bearer ${accessToken}`,
+          },
+          // withCredentials: true,
+        }
+      )
+      return res.data
+    }
+    catch (error: any) {
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+);
 // InitialState value
 const initialState: UserState = {
+  userId: "",
   username: "",
   password: "",
   name: "",
@@ -215,6 +285,11 @@ const userReducer = createReducer(initialState, (builder) => {
         state.accessToken = accessToken;
         state.refreshToken = refreshToken;
 
+        const decodedToken = jwtDecode(action.payload.accessToken) as JwtPayload
+        const decodedToken2 = jwtDecode(action.payload.refreshToken) as JwtPayload
+        console.log(decodedToken.user_id, decodedToken2.user_id)
+        state.userId = decodedToken.user_id;
+
         sessionStorage.setItem("accessToken", JSON.stringify(accessToken));
         sessionStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
@@ -223,6 +298,21 @@ const userReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
     })
     .addCase(loginAccount.rejected, (state) => {
+      state.isLoading = false;
+    })
+    .addCase(getUserInfo.pending, (state) => {
+      state.isLoading = true;
+    })
+    .addCase(getUserInfo.rejected, (state) => {
+      state.isLoading = false;
+    })
+    .addCase(getUserInfo.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.username = action.payload.name;
+        state.name = action.payload.name;
+        state.email = action.payload.email;
+        state.phone = action.payload.phone;
+      }
       state.isLoading = false;
     })
     .addCase(handleAccessToken.fulfilled, (state, action) => {
@@ -243,7 +333,7 @@ const userReducer = createReducer(initialState, (builder) => {
         state.isLogin = true;
       }
     })
-    .addCase(handleAccessToken.pending, (state) => {
+    .addCase(handleRefreshToken.pending, (state) => {
       state.isLoading = true;
     })
     .addCase(handleRefreshToken.fulfilled, (state, action) => {
@@ -261,9 +351,8 @@ const userReducer = createReducer(initialState, (builder) => {
       }
       state.isLoading = false;
     })
-    .addCase(handleAccessToken.rejected, (state) => {
-      state.isLoading = false;
-      state.isLogin = false;
+    .addCase(handleRefreshToken.rejected, (state) => {
+      return initialState;
     })
     .addCase(handleEditProfile.pending, (state) => {
       state.isLoading = true;
@@ -283,6 +372,17 @@ const userReducer = createReducer(initialState, (builder) => {
     })
     .addCase(handleEditProfile.rejected, (state) => {
       state.isLoading = false;
+    })
+    .addCase(logoutAccount.pending, (state) => {
+      state.isLoading = true;
+    })
+    .addCase(logoutAccount.rejected, (state) => {
+      state.isLoading = false;
+    })
+    .addCase(logoutAccount.fulfilled, (state) => {
+      sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("refreshToken");
+      return initialState;
     });
 });
 

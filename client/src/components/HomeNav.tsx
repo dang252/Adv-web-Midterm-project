@@ -18,13 +18,41 @@ import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 // Reduc/redux-toolkit config import
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../redux/hooks";
+import { handleRefreshToken, logoutAccount } from "../redux/reducers/user.reducer";
+import { toast } from "react-toastify";
 
 const HomeNav = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-
+  const dispathAsync = useAppDispatch();
+  const navigate = useNavigate();
   const name = useSelector<RootState, string>((state) => state.user.name);
-
+  const userId = useSelector<RootState, string | undefined>(
+    (state) => state.user.userId
+  );
+  const handleLogout = () => {
+    dispathAsync(logoutAccount({ userId: userId }))
+      .then(() => {
+        navigate("/");
+        toast.success("Logout successfully");
+      })
+      .catch((err) => {
+        if (err.response.status == 403) {
+          dispathAsync(handleRefreshToken())
+            .catch((err) => {
+              console.log(err)
+            });
+          dispathAsync(logoutAccount({ userId: userId }))
+            .then(() => {
+              toast.success("Logout successfully");
+            })
+            .catch(() => {
+              toast.error("Cannot logout, try later!")
+            })
+        }
+      })
+  }
   return (
     <>
       <Box bg={useColorModeValue("gray.100", "gray.900")} px={14}>
@@ -73,7 +101,7 @@ const HomeNav = () => {
                   <Link to="/home/edit">
                     <MenuItem>Edit Profile</MenuItem>
                   </Link>
-                  <MenuItem>Logout</MenuItem>
+                  <MenuItem onClick={() => { handleLogout() }}>Logout</MenuItem>
                 </MenuList>
               </Menu>
             </Stack>

@@ -1,4 +1,5 @@
 export interface UserAccount {
+  userId?: string;
   username?: string;
   password?: string;
   name?: string;
@@ -7,4 +8,10 @@ export interface UserAccount {
   role?: string;
   accessToken?: string;
   refreshToken?: string;
+}
+
+export interface JwtPayload {
+  exp: number;
+  iat: number;
+  user_id: string;
 }
