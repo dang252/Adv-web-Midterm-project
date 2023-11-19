@@ -103,7 +103,6 @@ const Login = () => {
     });
 
     reset({
-      username: "",
       password: "",
     });
   };

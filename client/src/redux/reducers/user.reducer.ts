@@ -247,6 +247,12 @@ export const logoutAccount = createAsyncThunk(
     }
   }
 );
+
+export const stopLoad = () => ({
+  type: 'STOP_LOADING',
+});
+
+
 // InitialState value
 const initialState: UserState = {
   userId: "",
@@ -386,6 +392,9 @@ const userReducer = createReducer(initialState, (builder) => {
       sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("refreshToken");
       return initialState;
+    })
+    .addCase("STOP_LOADING", (state) => {
+      state.isLoading = false;
     });
 });
 
