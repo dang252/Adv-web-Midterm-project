@@ -352,7 +352,7 @@ const userReducer = createReducer(initialState, (builder) => {
       }
       state.isLoading = false;
     })
-    .addCase(handleRefreshToken.rejected, (state) => {
+    .addCase(handleRefreshToken.rejected, () => {
       sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("refreshToken");
       return initialState;
@@ -382,7 +382,7 @@ const userReducer = createReducer(initialState, (builder) => {
     .addCase(logoutAccount.rejected, (state) => {
       state.isLoading = false;
     })
-    .addCase(logoutAccount.fulfilled, (state) => {
+    .addCase(logoutAccount.fulfilled, () => {
       sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("refreshToken");
       return initialState;

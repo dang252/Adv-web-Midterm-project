@@ -32,10 +32,6 @@ const Home = () => {
     if (userId != null) {
       const promise = dispathAsync(getUserInfo({ userId: userId }));
 
-      promise.unwrap().then((res) => {
-        // console.log("check res get user Info:", res);
-      });
-
       promise.unwrap().catch((err) => {
         // console.log("Check err get user info:", err);
         if (err.response.status == 403) {
