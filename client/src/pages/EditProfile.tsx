@@ -23,6 +23,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
 import Loading from "../components/Loading";
+import { useAppDispatch } from "../redux/hooks";
+import { handleEditProfile, handleRefreshToken } from "../redux/reducers/user.reducer";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 interface FormInputs {
   name: string;
@@ -31,23 +35,47 @@ interface FormInputs {
 }
 
 const EditProfile = () => {
+  const dispathAsync = useAppDispatch();
+  const navigate = useNavigate();
   const isLoading = useSelector<RootState, boolean | undefined>(
     (state) => state.user.isLoading
   );
+  const userId = useSelector<RootState, string | undefined>(
+    (state) => state.user.userId
+  );
+  const username = useSelector<RootState, string | undefined>(
+    (state) => state.user.username
+  );
+
+  const email = useSelector<RootState, string | undefined>(
+    (state) => state.user.email
+  );
+
+  const phone = useSelector<RootState, string | undefined>(
+    (state) => state.user.phone
+  );
+
 
   const formSchema = Yup.object().shape({
     name: Yup.string()
       .required("Name is required")
       .min(3, "Name must be at 3 char long"),
     email: Yup.string()
-      .required("Password is required")
-      .min(3, "Password must be at 3 char long"),
+      .required("Email is required")
+      .min(3, "Email must be at 3 char long"),
     phone: Yup.string()
       .required("Phone is required")
       .min(10, "Phone must be at 10 char long"),
   });
 
-  const formOptions = { resolver: yupResolver(formSchema) };
+  const formOptions = {
+    resolver: yupResolver(formSchema),
+    defaultValues: {
+      name: username!,
+      email: email!,
+      phone: phone!,
+    },
+  };
 
   const {
     register,
@@ -58,12 +86,35 @@ const EditProfile = () => {
 
   const onSubmit = async (data: FormInputs) => {
     const UserAccount: UserAccount = {
+      userId: userId,
       name: data.name,
       phone: data.phone,
       email: data.email,
     };
 
-    console.log(UserAccount);
+    const promise = dispathAsync(handleEditProfile(UserAccount))
+    promise.unwrap().then(() => {
+      navigate("/home");
+      toast.success("Edit profile successfully");
+    })
+    promise.unwrap().catch((err) => {
+      if (err.response.status == 403) {
+        const refreshPromise = dispathAsync(handleRefreshToken())
+        refreshPromise.unwrap().then(() => {
+          const retryPromise = dispathAsync(handleEditProfile(UserAccount))
+          retryPromise.unwrap().then(() => {
+            navigate("/home");
+            toast.success("Edit profile successfully");
+          })
+          retryPromise.unwrap().catch(() => {
+            toast.error("Cannot edit, try later!")
+          })
+        })
+        refreshPromise.unwrap().catch(() => {
+          toast.error("Cannot edit, try later!")
+        });
+      }
+    })
 
     reset({
       name: "",

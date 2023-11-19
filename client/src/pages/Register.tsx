@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 
 import { useTitle } from "../hooks/useTitle";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useAppDispatch } from "../redux/hooks";
 
@@ -28,6 +28,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
 import RegisterNav from "../components/RegisterNav";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { useEffect } from "react";
 
 interface FormInputs {
   name: string;
@@ -40,6 +43,18 @@ interface FormInputs {
 
 const Register = () => {
   const dispathAsync = useAppDispatch();
+  const navigate = useNavigate();
+
+  const isLogin = useSelector<RootState, boolean | undefined>(
+    (state) => state.user.isLogin
+  );
+
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/home");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLogin]);
 
   const formSchema = Yup.object().shape({
     name: Yup.string()

@@ -18,6 +18,14 @@ const Home = () => {
     (state) => state.user.username
   );
 
+  const email = useSelector<RootState, string | undefined>(
+    (state) => state.user.email
+  );
+
+  const phone = useSelector<RootState, string | undefined>(
+    (state) => state.user.phone
+  );
+
   console.log(username)
 
   useEffect(() => {
@@ -32,12 +40,15 @@ const Home = () => {
         // console.log("Check err get user info:", err);
         if (err.response.status == 403) {
           dispathAsync(handleRefreshToken())
+            .then(() => {
+              //try again
+              // console.log("try again")
+              dispathAsync(getUserInfo({ userId: userId }))
+            })
             .catch(
               (err) => {
                 console.log(err)
-              });
-          //try again
-          dispathAsync(getUserInfo({ userId: userId }))
+              })
         }
       });
     }
@@ -51,6 +62,12 @@ const Home = () => {
       <p className="text-center text-3xl mt-10 font-bold">Wellcome,
         {username == " " ? <span>Anonymous</span> : <span>{username}</span>}
       </p>
+      {
+        email && <p className="text-center text-xl mt-10 font-bold">Email: {email}</p>
+      }
+      {
+        phone && <p className="text-center text-xl mt-10 font-bold">Phone number: {phone}</p>
+      }
 
     </div>
   );

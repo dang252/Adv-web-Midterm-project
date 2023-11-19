@@ -17,15 +17,22 @@ import LandingContributor from "../components/LandingContributor";
 import LandingFooter from "../components/LandingFooter";
 
 import { useTitle } from "../hooks/useTitle";
+import { RootState } from "../redux/store";
+import { useSelector } from "react-redux";
+import HomeNav from "../components/HomeNav";
 
 const Landing = () => {
+
+  const isLogin = useSelector<RootState, boolean | undefined>(
+    (state) => state.user.isLogin
+  );
   const lineupRef = useRef(null);
 
   useTitle("Moodlab | Welcome");
 
   return (
     <div>
-      <LandingNav lineupRef={lineupRef} />
+      {isLogin ? <HomeNav /> : <LandingNav lineupRef={lineupRef} />}
       <Container maxW={"7xl"} my={"100px"} p={4}>
         <Stack
           align={"center"}

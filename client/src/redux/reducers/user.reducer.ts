@@ -181,7 +181,7 @@ export const handleEditProfile = createAsyncThunk(
   "user/handle_edit_profile",
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-  async (_, thunkAPI) => {
+  async (account: UserAccount, thunkAPI) => {
     try {
       const accessToken = sessionStorage
         .getItem("accessToken")
@@ -190,13 +190,15 @@ export const handleEditProfile = createAsyncThunk(
 
       if (accessToken) {
         const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/user/edit`,
+          `${import.meta.env.VITE_API_URL}/user/${account.userId}`,
           {
-            token: accessToken,
+            name: account.name,
+            phone: account.phone,
+            email: account.email,
           },
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              token: `Bearer ${accessToken}`,
             },
           }
         );
@@ -206,6 +208,7 @@ export const handleEditProfile = createAsyncThunk(
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      console.log("fail edit")
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -286,8 +289,6 @@ const userReducer = createReducer(initialState, (builder) => {
         state.refreshToken = refreshToken;
 
         const decodedToken = jwtDecode(action.payload.accessToken) as JwtPayload
-        const decodedToken2 = jwtDecode(action.payload.refreshToken) as JwtPayload
-        console.log(decodedToken.user_id, decodedToken2.user_id)
         state.userId = decodedToken.user_id;
 
         sessionStorage.setItem("accessToken", JSON.stringify(accessToken));
@@ -352,6 +353,8 @@ const userReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
     })
     .addCase(handleRefreshToken.rejected, (state) => {
+      sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("refreshToken");
       return initialState;
     })
     .addCase(handleEditProfile.pending, (state) => {

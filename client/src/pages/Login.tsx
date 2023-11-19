@@ -20,7 +20,7 @@ import { RootState } from "../redux/store";
 import { useAppDispatch } from "../redux/hooks";
 
 import { UserAccount } from "../types";
-import { getUserInfo, loginAccount } from "../redux/reducers/user.reducer";
+import { loginAccount } from "../redux/reducers/user.reducer";
 
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
